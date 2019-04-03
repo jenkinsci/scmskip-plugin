@@ -1,0 +1,11 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    <f:entry title="Delete Build" field="deleteBuild" description="Delete skipped build after completion.">
+        <f:checkbox />
+    </f:entry>
+    <f:advanced>
+        <f:entry title="Pattern" field="skipPattern" description="Override default skip pattern. Must be a valid regex expression">
+            <f:textbox />
+        </f:entry>
+    </f:advanced>
+</j:jelly>
