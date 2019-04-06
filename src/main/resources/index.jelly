@@ -1,4 +1,4 @@
 <?jelly escape-by-default='true'?>
 <div>
-
+    Plugin adds functionality of preventing a Job to be built when a specific pattern ([ci skip]) in SCM commit message is detected.
 </div>

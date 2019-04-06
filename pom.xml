@@ -25,7 +25,7 @@
         <workflow-support-plugin.version>2.14</workflow-support-plugin.version>
     </properties>
     <name>SCM Skip Plugin</name>
-    <description>Skip Building a Job with specific pattern in change set message.</description>
+    <description>Plugin adds functionality of preventing a Job to be built when a specific pattern ([ci skip]) in SCM commit message is detected.</description>
     <!-- The default licence for Jenkins OSS Plugins is MIT. Substitute for the applicable one if needed. -->
     <licenses>
         <license>

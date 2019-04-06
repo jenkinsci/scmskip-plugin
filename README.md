@@ -9,7 +9,7 @@ After SCM checkout SCM Skip plugin checks **last** commit message for specific p
 Matching pattern is by default: 
 
 ```
-.*q\[ci skip\].*
+.*\[ci skip\].*
 ```
 
 Pattern can be override in global configuration or for each Job separately.
