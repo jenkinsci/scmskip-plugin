@@ -1,6 +1,6 @@
 # Jenkins SCM Skip Plugin
 
-Jenkins SCM Skip Plugin adds functionality of preventing a Job to be built when a specific pattern in SCM commit message is detected.
+Jenkins SCM Skip Plugin checks for matching pattern in scm commit message and aborts current build if it matches.
 Plugin can be used in Freestyle Job or in a Pipeline. Additionally, skipped build can be automatically deleted.
 
 ## How it works
