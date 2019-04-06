@@ -83,23 +83,26 @@
 
     </dependencies>
 
-    <!-- If you want this to appear on the wiki page:
+    <!-- If you want this to appear on the wiki page: -->
     <developers>
       <developer>
-        <id>bhacker</id>
-        <name>Bob Q. Hacker</name>
-        <email>bhacker@nowhere.net</email>
+        <id>plavc</id>
+        <name>Gregor Plavčak</name>
+        <email>gregor@plavcak.net</email>
       </developer>
-    </developers> -->
+    </developers>
 
     <!-- Assuming you want to host on @jenkinsci:
     <url>https://wiki.jenkins.io/display/JENKINS/SCMSkip+Plugin</url>
+
+    https://github.com/plavc/jenkins-scmskip-plugin.git
+-->
     <scm>
         <connection>scm:git:git://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
         <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
         <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
     </scm>
-    -->
+
     <repositories>
         <repository>
             <id>repo.jenkins-ci.org</id>
