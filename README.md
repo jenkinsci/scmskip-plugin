@@ -1,7 +1,7 @@
 # Jenkins SCM Skip Plugin
 
 Jenkins SCM Skip Plugin checks for matching pattern in scm commit message and aborts current build if it matches.
-Plugin can be used in Freestyle Job or in a Pipeline. Additionally, skipped build can be automatically deleted.
+The plugin can be used in Freestyle Job or in a Pipeline. Additionally, skipped build can be automatically deleted.
 
 ## How it works
 

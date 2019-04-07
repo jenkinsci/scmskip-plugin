@@ -49,6 +49,7 @@ public class SCMSkipDeleteEnvironmentAction implements EnvironmentContributingAc
         env.put(SCMSkipConstants.DELETE_BUILD, String.valueOf(deleteBuild));
     }
 
+    @Override
     public void buildEnvironment(Run<?,?> run, EnvVars env) {
         env.put(SCMSkipConstants.DELETE_BUILD, String.valueOf(deleteBuild));
     }

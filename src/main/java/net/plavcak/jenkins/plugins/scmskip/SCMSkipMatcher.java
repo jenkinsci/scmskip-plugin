@@ -31,6 +31,6 @@ public class SCMSkipMatcher {
         if (regex == null || regex.isEmpty()) {
             regex = SCMSkipConstants.DEFAULT_PATTERN;
         }
-        this.pattern = Pattern.compile(regex, Pattern.MULTILINE);
+        this.pattern = Pattern.compile(regex, Pattern.DOTALL);
     }
 }

@@ -2,7 +2,7 @@
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
 
   <f:section title="SCM Skip" name="scmSkip">
-      <f:entry title="Pattern" field="skipPattern">
+      <f:entry title="Pattern" field="skipPattern" description="Pattern will be used for matching commit messages in SCM. Pattern must be a valid regular expression. default value is: .*\[ci skip\].*">
         <f:textbox/>
       </f:entry>
   </f:section>

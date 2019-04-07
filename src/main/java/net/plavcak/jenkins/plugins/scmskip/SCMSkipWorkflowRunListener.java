@@ -17,7 +17,9 @@ public class SCMSkipWorkflowRunListener extends RunListener<WorkflowRun> {
 
         try {
             if (SCMSkipTools.isBuildToDelete(workflowRun)) {
-                LOGGER.info("Deleting build...");
+                if (LOGGER.isLoggable(Level.FINE)) {
+                    LOGGER.log(Level.FINE, "Deleting build: " + workflowRun.getId());
+                }
                 SCMSkipTools.deleteRun(workflowRun);
             }
         } catch (Exception e) {

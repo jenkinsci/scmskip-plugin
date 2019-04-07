@@ -59,7 +59,7 @@ public class SCMSkipBuildWrapper extends BuildWrapper {
     public Environment setUp(AbstractBuild build, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
 
         if(SCMSkipTools.inspectChangeSet(build, skipMatcher, listener)) {
-            SCMSkipTools.setRunToDelete(build, deleteBuild);
+            SCMSkipTools.tagRunForDeletion(build, deleteBuild);
 
             try {
                 SCMSkipTools.stopBuild(build);
@@ -71,7 +71,7 @@ public class SCMSkipBuildWrapper extends BuildWrapper {
                 }
             }
         } else {
-            SCMSkipTools.setRunToDelete(build, false);
+            SCMSkipTools.tagRunForDeletion(build, false);
         }
 
         return new Environment() { };

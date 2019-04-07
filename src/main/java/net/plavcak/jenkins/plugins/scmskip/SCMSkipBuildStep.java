@@ -63,7 +63,7 @@ public class SCMSkipBuildStep extends Builder implements SimpleBuildStep {
     public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath workspace, @Nonnull Launcher launcher, @Nonnull TaskListener listener) throws InterruptedException, IOException {
 
         if(SCMSkipTools.inspectChangeSet(run, skipMatcher, listener)) {
-            SCMSkipTools.setRunToDelete(run, deleteBuild);
+            SCMSkipTools.tagRunForDeletion(run, deleteBuild);
 
             try {
                 SCMSkipTools.stopBuild(run);
@@ -75,7 +75,7 @@ public class SCMSkipBuildStep extends Builder implements SimpleBuildStep {
                 }
             }
         } else {
-            SCMSkipTools.setRunToDelete(run, false);
+            SCMSkipTools.tagRunForDeletion(run, false);
         }
     }
 

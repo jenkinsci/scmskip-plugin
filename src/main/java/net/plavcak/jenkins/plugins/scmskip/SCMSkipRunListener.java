@@ -17,7 +17,6 @@ public class SCMSkipRunListener extends RunListener<AbstractBuild> {
     public void onFinalized(AbstractBuild build) {
         try {
             if (SCMSkipTools.isBuildToDelete((Run)build)) {
-                LOGGER.info("Deleting build...");
                 SCMSkipTools.deleteBuild(build);
             }
         } catch (IOException e) {
