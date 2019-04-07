@@ -25,14 +25,14 @@ For example, a matching message would be:
 
 Plugin's matching regex pattern can be set in Jenkins Global configuration under "SCM Skip" section.
 
-![Jenkins Global Configuration](docs/doc_global_configuration.png)
+![Jenkins Global Configuration](doc_global_configuration.png)
 
 ## Freestyle Job
 
 In Freestyle Job, plugin can be enabled under **Environment** section. 
 There are options to delete aborted build and to override matching pattern. See image below.
 
-![Job Configuration](docs/doc_job_configuration.png)
+![Job Configuration](doc_job_configuration.png)
 
 ## Pipeline Job
 
