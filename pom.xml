@@ -28,6 +28,7 @@
         <workflow-cps-plugin.version>2.65</workflow-cps-plugin.version>
         <workflow-step-api-plugin.version>2.19</workflow-step-api-plugin.version>
         <workflow-support-plugin.version>3.2</workflow-support-plugin.version>
+        <workflow-aggregator.version>2.6</workflow-aggregator.version>
     </properties>
     <name>SCM Skip Plugin</name>
     <description>Plugin adds functionality of preventing a Job to be built when a specific pattern ([ci skip]) in SCM commit message is detected.</description>
@@ -54,6 +55,7 @@
             <groupId>org.jenkins-ci.plugins.workflow</groupId>
             <artifactId>workflow-step-api</artifactId>
             <version>${workflow-step-api-plugin.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jenkins-ci.plugins.workflow</groupId>
@@ -71,7 +73,7 @@
             <groupId>org.jenkins-ci.plugins.workflow</groupId>
             <artifactId>workflow-cps</artifactId>
             <version>${workflow-cps-plugin.version}</version>
-            <scope>test</scope>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.jenkins-ci.plugins.workflow</groupId>
@@ -83,6 +85,12 @@
             <groupId>org.jenkins-ci.plugins.workflow</groupId>
             <artifactId>workflow-support</artifactId>
             <version>${workflow-support-plugin.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jenkinsci.plugins</groupId>
+            <artifactId>pipeline-model-definition</artifactId>
+            <version>1.2.4</version>
             <scope>test</scope>
         </dependency>
 
