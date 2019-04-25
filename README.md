@@ -1,43 +1,35 @@
 # Jenkins SCM Skip Plugin
 
-Jenkins SCM Skip Plugin checks for matching pattern in scm commit message and aborts current build if it matches.
-The plugin can be used in Freestyle Job or in a Pipeline. Additionally, skipped build can be automatically deleted.
+SCM Skip Plugin skips build triggered by SCM webhooks based on the commit message. If commit message matches given regular expression freestyle or pipeline build is skipped. Default regex is `.*\[ci skip\].*`, but can be overridden in global Jenkins configuration or on specific job/pipeline.
+
+The plugin enables deletion of skipped builds. This feature is available for freestyle jobs and also for pipelines.
 
 ## How it works
 
-After SCM checkout SCM Skip plugin checks **last** commit message for specific pattern.
-Matching pattern is by default: 
+After SCM checkout SCM Skip plugin matches ***last*** commit message with regular expression. For freestyle jobs, the plugin integrates early into lifecycle after SCM checkout. Therefore, nothing is executed on a positive regex match. 
 
-```
-.*\[ci skip\].*
-```
+For pipeline jobs, the plugin can be enabled as a pipeline step and currently cannot be executed earlier in the Jenkins build lifecycle.
 
-Pattern can be override in global configuration or for each Job separately.
-The pattern must be a valid regex expression.  
-
-If last commit message matches pattern, build is aborted (and deleted if enabled).
-For example, a matching message would be: 
+If last commit message matches the pattern, the build is aborted (and deleted if enabled). For example, one of the matching messages would be:
 - `Updated version. New version: 1.0.1 [ci skip]`
 - `[ci skip] Some changes`
 - `[ci skip]`
 
 ## Global Configuration
 
-Plugin's matching regex pattern can be set in Jenkins Global configuration under "SCM Skip" section.
+The regular expression can be set in Jenkins global configuration under "SCM Skip" section.
 
 ![Jenkins Global Configuration](docs/doc_global_configuration.png)
 
-## Freestyle Job
+## Enable on: freestyle job
 
-In Freestyle Job, plugin can be enabled under **Environment** section. 
-There are options to delete aborted build and to override matching pattern. See image below.
+On a freestyle job, the plugin can be enabled under the ***Environment*** section. Among other options, there is also a checkbox for "SCM Skip". After enabling plugin there are also options to override matching regex and enable deletion of skipped build.  A sample configuration is depicted on an image below.
 
 ![Job Configuration](docs/doc_job_configuration.png)
 
-## Pipeline Job
+## Enable on: pipeline
 
-SCM Skip plugin can also be used in a declarative or a scripted Pipeline Job. 
-In this case plugin is available as a build step, with name **scmSkip**.
+When using pipeline with a Jenkinsfile syntax (declarative or scripted), the plugin can be enabled as a step in a stage with ***scmSkip*** step. The plugin can be included anywhere in pipeline, but it is recommended to include it as the first step. This way no other steps will be executed if the build is skipped. How to include the plugin in the pipeline is depicted on the image below. In the pipeline is also possible to override the regex pattern and enable build deletion. Both parameters are optional.
 
 ```Jenkinsfile
     pipeline {
@@ -53,5 +45,3 @@ In this case plugin is available as a build step, with name **scmSkip**.
     }
 ```
 
-`deleteBuild` and `skipPattern` are optional parameters. Default value of `deleteBuild` is **false**. 
-Default value for `skipPattern` is **null** and matching pattern is read from global configuration.
