@@ -1,7 +1,12 @@
 package net.plavcak.jenkins.plugins.scmskip;
 
-import hudson.*;
-import hudson.model.*;
+import hudson.AbortException;
+import hudson.Extension;
+import hudson.FilePath;
+import hudson.Launcher;
+import hudson.model.AbstractProject;
+import hudson.model.Run;
+import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import jenkins.tasks.SimpleBuildStep;
@@ -57,10 +62,11 @@ public class SCMSkipBuildStep extends Builder implements SimpleBuildStep {
     @DataBoundSetter
     public void setSkipPattern(String skipPattern) {
         this.skipPattern = skipPattern;
+        this.skipMatcher.setPattern(this.skipPattern);
     }
 
     @Override
-    public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath workspace, @Nonnull Launcher launcher, @Nonnull TaskListener listener) throws InterruptedException, IOException {
+    public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath workspace, @Nonnull Launcher launcher, @Nonnull TaskListener listener) throws IOException {
 
         if(SCMSkipTools.inspectChangeSet(run, skipMatcher, listener)) {
             SCMSkipTools.tagRunForDeletion(run, deleteBuild);
@@ -101,7 +107,7 @@ public class SCMSkipBuildStep extends Builder implements SimpleBuildStep {
         }
 
         @Override
-        public boolean configure(StaplerRequest req, JSONObject json) throws FormException {
+        public boolean configure(StaplerRequest req, JSONObject json) {
             req.bindJSON(this, json.getJSONObject("scmSkip"));
             save();
             return true;

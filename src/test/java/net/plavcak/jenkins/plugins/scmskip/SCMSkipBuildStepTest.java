@@ -1,5 +1,5 @@
 package net.plavcak.jenkins.plugins.scmskip;
-;
+
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
@@ -18,7 +18,7 @@ public class SCMSkipBuildStepTest {
 
     @Test
     public void testConfigRoundtrip() throws Exception {
-        FreeStyleProject project = createFreestyleProject();
+        FreeStyleProject project = createFreestyleProject(null);
 
         project = jenkins.configRoundtrip(project);
 
@@ -29,7 +29,7 @@ public class SCMSkipBuildStepTest {
 
     @Test
     public void testBuildWithoutChangelog() throws Exception {
-        FreeStyleProject project = createFreestyleProject();
+        FreeStyleProject project = createFreestyleProject(null);
 
         FreeStyleBuild build = jenkins.buildAndAssertSuccess(project);
 
@@ -38,7 +38,7 @@ public class SCMSkipBuildStepTest {
 
     @Test
     public void testBuildWithChangelog() throws Exception {
-        FreeStyleProject project = createFreestyleProject();
+        FreeStyleProject project = createFreestyleProject(null);
 
         FakeChangeLogSCM fakeScm = new FakeChangeLogSCM();
         fakeScm.addChange().withMsg("Some change [ci skip] in code.");
@@ -51,8 +51,22 @@ public class SCMSkipBuildStepTest {
     }
 
     @Test
+    public void testBuildWithCustomPattern() throws Exception {
+        FreeStyleProject project = createFreestyleProject(".*\\[(ci skip|skip ci)\\].*");
+
+        FakeChangeLogSCM fakeScm = new FakeChangeLogSCM();
+        fakeScm.addChange().withMsg("Some change [skip ci] in code.");
+        project.setScm(fakeScm);
+
+        FreeStyleBuild build = jenkins.assertBuildStatus(Result.ABORTED, project.scheduleBuild2(0));
+
+        Assert.assertEquals("SCM Skip - build skipped", build.getDescription());
+        jenkins.assertLogContains("SCM Skip: Pattern .*\\[(ci skip|skip ci)\\].* matched on message: Some change [skip ci] in code.", build);
+    }
+
+    @Test
     public void testBuildWithMultiChangelog() throws Exception {
-        FreeStyleProject project = createFreestyleProject();
+        FreeStyleProject project = createFreestyleProject(null);
 
         FakeChangeLogSCM fakeScm = new FakeChangeLogSCM();
         fakeScm.addChange().withMsg("Some change [ci skip] in code.");
@@ -64,7 +78,7 @@ public class SCMSkipBuildStepTest {
     }
 
     @Test
-    public void testBuildWithGlobalConfiguration() throws Exception {
+    public void testBuildWithGlobalConfiguration() {
 
         SCMSkipBuildStep.DescriptorImpl descriptor = jenkins.getInstance().getDescriptorByType(SCMSkipBuildStep.DescriptorImpl.class);
 
@@ -77,9 +91,14 @@ public class SCMSkipBuildStepTest {
         Assert.assertEquals(".*\\[skip-ci\\].*", descriptor.getSkipPattern());
     }
 
-    private FreeStyleProject createFreestyleProject() throws IOException {
+    private FreeStyleProject createFreestyleProject(String skipPattern) throws IOException {
         FreeStyleProject project = jenkins.createFreeStyleProject();
         SCMSkipBuildStep builder = new SCMSkipBuildStep();
+
+        if (skipPattern != null) {
+            builder.setSkipPattern(skipPattern);
+        }
+
         project.getBuildersList().add(builder);
 
         return project;

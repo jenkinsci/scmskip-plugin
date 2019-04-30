@@ -3,7 +3,9 @@ package net.plavcak.jenkins.plugins.scmskip;
 import hudson.AbortException;
 import hudson.Extension;
 import hudson.Launcher;
-import hudson.model.*;
+import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
+import hudson.model.BuildListener;
 import hudson.tasks.BuildWrapper;
 import hudson.tasks.BuildWrapperDescriptor;
 import net.sf.json.JSONObject;
@@ -12,7 +14,7 @@ import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.StaplerRequest;
 
 import javax.annotation.Nonnull;
-import java.io.*;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -53,10 +55,11 @@ public class SCMSkipBuildWrapper extends BuildWrapper {
     @DataBoundSetter
     public void setSkipPattern(String skipPattern) {
         this.skipPattern = skipPattern;
+        this.skipMatcher.setPattern(this.skipPattern);
     }
 
     @Override
-    public Environment setUp(AbstractBuild build, Launcher launcher, BuildListener listener) throws IOException, InterruptedException {
+    public Environment setUp(AbstractBuild build, Launcher launcher, BuildListener listener) throws IOException {
 
         if(SCMSkipTools.inspectChangeSet(build, skipMatcher, listener)) {
             SCMSkipTools.tagRunForDeletion(build, deleteBuild);
@@ -99,7 +102,7 @@ public class SCMSkipBuildWrapper extends BuildWrapper {
         }
 
         @Override
-        public boolean configure(StaplerRequest req, JSONObject json) throws FormException {
+        public boolean configure(StaplerRequest req, JSONObject json) {
             req.bindJSON(this, json.getJSONObject("scmSkip"));
             save();
             return true;
