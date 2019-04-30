@@ -38,12 +38,13 @@ When using pipeline with a Jenkinsfile syntax (declarative or scripted), the plu
         stages {
             stage('Checkout') {
                 steps {
-                    scmSkip(deleteBuild: true, skipPattern:'.*\[ci skip\].*')
+                    scmSkip(deleteBuild: true, skipPattern:'.*\\[ci skip\\].*')
                 }
             }
         }
     }
 ```
+*When overriding the skip pattern in pipeline descriptor, make sure special characters are properly escaped (e.g. "\\").*
 
 ## Release notes
 
