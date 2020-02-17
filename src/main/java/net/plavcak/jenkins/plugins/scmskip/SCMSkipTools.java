@@ -40,8 +40,10 @@ public class SCMSkipTools {
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.log(Level.FINE, "Deleting Run: '" + run.getId() + "'");
         }
-        run.getParent().updateNextBuildNumber(run.number);
         run.delete();
+        Job job = run.getParent();
+        job.updateNextBuildNumber(run.number);
+        job.save();
     }
 
     public static void tagRunForDeletion(Run<?,?> run, boolean deleteBuild) throws IOException {
