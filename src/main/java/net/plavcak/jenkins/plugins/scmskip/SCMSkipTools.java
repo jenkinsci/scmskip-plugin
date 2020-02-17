@@ -40,6 +40,7 @@ public class SCMSkipTools {
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.log(Level.FINE, "Deleting Run: '" + run.getId() + "'");
         }
+        run.getParent().updateNextBuildNumber(run.number);
         run.delete();
     }
 
