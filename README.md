@@ -48,6 +48,10 @@ When using pipeline with a Jenkinsfile syntax (declarative or scripted), the plu
 
 ## Release notes
 
+- ### 1.0.2
+    Resolved issue. Build number was not preserved on multibranch pipelines when build deletion enabled.
+    Jira ticket: https://issues.jenkins-ci.org/browse/JENKINS-61113
+
 - ### 1.0.1
     Resolved issue. Skip pattern defined in Jenkinsfile wasn't overriding global configuration.
     Jira ticket: https://issues.jenkins-ci.org/browse/JENKINS-57234
