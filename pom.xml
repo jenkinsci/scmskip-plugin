@@ -9,7 +9,7 @@
     </parent>
     <groupId>net.plavcak.jenkins</groupId>
     <artifactId>scmskip</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3-SNAPSHOT</version>
     <packaging>hpi</packaging>
     <properties>
         <!-- Baseline Jenkins version you use to build the plugin. Users must have this version or newer to run. -->
@@ -111,7 +111,7 @@
         <connection>scm:git:git://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
         <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
         <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
-      <tag>scmskip-1.0.2</tag>
+      <tag>HEAD</tag>
   </scm>
 
     <repositories>
