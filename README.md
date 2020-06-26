@@ -48,6 +48,10 @@ When using pipeline with a Jenkinsfile syntax (declarative or scripted), the plu
 
 ## Release notes
 
+- ### 1.0.3
+    Resolved issue. Skip pattern matcher didn't match multiple lines in the commit message. 
+    Jira ticket: https://issues.jenkins-ci.org/browse/JENKINS-62751
+
 - ### 1.0.2
     Resolved issue. Build number was not preserved on multibranch pipelines when build deletion enabled.
     Jira ticket: https://issues.jenkins-ci.org/browse/JENKINS-61113

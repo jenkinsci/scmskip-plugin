@@ -69,6 +69,7 @@ public class SCMSkipBuildWrapperTest {
 
         SCMSkipFakeSCM scm = new SCMSkipFakeSCM("Jenkinsfile", pipelineFile);
         scm.addChange().withMsg("Some change [skip ci] in code.");
+        scm.addChange().withMsg("Additional line.");
 
         FlowDefinition fd = new CpsScmFlowDefinition(scm, "Jenkinsfile");
 
@@ -79,7 +80,8 @@ public class SCMSkipBuildWrapperTest {
 
         WorkflowRun completedBuild = jenkins.assertBuildStatus(Result.ABORTED, future);
 
-        String expectedString = "SCM Skip: Pattern .*\\[(ci skip|skip ci)\\].* matched on message: Some change [skip ci] in code.";
+        String expectedString = "SCM Skip: Pattern .*\\[(ci skip|skip ci)\\].* matched on message: "
+            + "Some change [skip ci] in code. Additional line.";
 
         Assert.assertEquals("SCM Skip - build skipped", completedBuild.getDescription());
 
