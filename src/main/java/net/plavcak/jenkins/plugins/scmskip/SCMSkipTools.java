@@ -3,6 +3,9 @@ package net.plavcak.jenkins.plugins.scmskip;
 import hudson.AbortException;
 import hudson.model.*;
 import hudson.scm.ChangeLogSet;
+import hudson.scm.ChangeLogSet.Entry;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 
 import javax.servlet.ServletException;
@@ -78,42 +81,52 @@ public class SCMSkipTools {
 
     private static boolean inspectChangeSet(List<ChangeLogSet<?>> changeLogSets, SCMSkipMatcher matcher, PrintStream logger) {
         if (changeLogSets.isEmpty()) {
-            logger.println("SCM Skip: Changelog is empty!");
-            if (LOGGER.isLoggable(Level.FINE)) {
-                LOGGER.log(Level.FINE, "Changelog is empty!");
-            }
-        } else {
-            ChangeLogSet<?> changeLogSet = changeLogSets.get(changeLogSets.size()-1);
+            logEmptyChangeLog(logger);
+            return false;
+        }
 
-            ChangeLogSet.Entry item = (ChangeLogSet.Entry) changeLogSet.getItems()[changeLogSet.getItems().length-1];
+        ChangeLogSet<?> changeLogSet = changeLogSets.get(changeLogSets.size()-1);
 
-            if (matcher.match(item.getMsg())) {
-                logger.println("SCM Skip: Pattern "
-                        + matcher.getPattern().pattern()
-                        + " matched on message: "
-                        + item.getMsg());
+        if (changeLogSet.isEmptySet()) {
+            logEmptyChangeLog(logger);
+        }
 
-                if (LOGGER.isLoggable(Level.FINE)) {
-                    LOGGER.log(Level.FINE, "SCM Skip: Pattern "
-                            + matcher.getPattern().pattern()
-                            + " matched on message: "
-                            + item.getMsg());
-                }
-                return true;
-            } else {
-                logger.println("SCM Skip: Pattern "
-                        + matcher.getPattern().pattern()
-                        + " NOT matched on message: "
-                        + item.getMsg());
-                if (LOGGER.isLoggable(Level.FINE)) {
-                    LOGGER.log(Level.FINE, "SCM Skip: Pattern "
-                            + matcher.getPattern().pattern()
-                            + " NOT matched on message: "
-                            + item.getMsg());
-                }
+        ChangeLogSet.Entry matchedEntry = null;
+
+        for (Object entry : changeLogSet.getItems()) {
+            if (entry instanceof ChangeLogSet.Entry && inspectChangeSetEntry((Entry) entry, matcher)) {
+                matchedEntry = (Entry) entry;
+                break;
             }
         }
-        return false;
+
+        String commitMessage  = combineChangeLogMessages(changeLogSet);
+
+        if (matchedEntry == null) {
+            logger.println("SCM Skip: Pattern "
+                    + matcher.getPattern().pattern()
+                    + " NOT matched on message: "
+                    + commitMessage);
+            if (LOGGER.isLoggable(Level.FINE)) {
+                LOGGER.log(Level.FINE, "SCM Skip: Pattern "
+                        + matcher.getPattern().pattern()
+                        + " NOT matched on message: "
+                        + commitMessage);
+            }
+        } else {
+            logger.println("SCM Skip: Pattern "
+                + matcher.getPattern().pattern()
+                + " matched on message: "
+                + commitMessage);
+            if (LOGGER.isLoggable(Level.FINE)) {
+                LOGGER.log(Level.FINE, "SCM Skip: Pattern "
+                    + matcher.getPattern().pattern()
+                    + " matched on message: "
+                    + commitMessage);
+            }
+        }
+
+        return matchedEntry != null;
     }
 
     public static void stopBuild(Run<?, ?> run) throws AbortException, IOException, ServletException {
@@ -133,6 +146,23 @@ public class SCMSkipTools {
             build.doStop();
         } else {
             throw new AbortException("SCM Skip: Build has been skipped due to SCM Skip Plugin!");
+        }
+    }
+
+    private static boolean inspectChangeSetEntry(ChangeLogSet.Entry entry, SCMSkipMatcher matcher) {
+        return matcher.match(entry.getMsg());
+    }
+
+    private static String combineChangeLogMessages(ChangeLogSet<?> changeLogSet) {
+        return Arrays.stream(changeLogSet.getItems())
+            .map(i -> ((Entry) i).getMsg())
+            .collect(Collectors.joining(" "));
+    }
+
+    private static void logEmptyChangeLog(PrintStream logger) {
+        logger.println("SCM Skip: Changelog is empty!");
+        if (LOGGER.isLoggable(Level.FINE)) {
+            LOGGER.log(Level.FINE, "Changelog is empty!");
         }
     }
 }
