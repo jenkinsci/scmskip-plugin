@@ -93,16 +93,20 @@ public class SCMSkipTools {
 
         ChangeLogSet.Entry matchedEntry = null;
 
+        boolean allSkipped = true;
+        
         for (Object entry : changeLogSet.getItems()) {
             if (entry instanceof ChangeLogSet.Entry && inspectChangeSetEntry((Entry) entry, matcher)) {
                 matchedEntry = (Entry) entry;
+            } else {
+                allSkipped = false;
                 break;
             }
         }
 
         String commitMessage  = combineChangeLogMessages(changeLogSet);
 
-        if (matchedEntry == null) {
+        if (allSkipped) {
             logger.println("SCM Skip: Pattern "
                     + matcher.getPattern().pattern()
                     + " NOT matched on message: "
@@ -126,7 +130,7 @@ public class SCMSkipTools {
             }
         }
 
-        return matchedEntry != null;
+        return allSkipped;
     }
 
     public static void stopBuild(Run<?, ?> run) throws AbortException, IOException, ServletException {
