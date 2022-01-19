@@ -69,7 +69,29 @@ public class SCMSkipBuildWrapperTest {
 
         SCMSkipFakeSCM scm = new SCMSkipFakeSCM("Jenkinsfile", pipelineFile);
         scm.addChange().withMsg("Some change [skip ci] in code.");
-        scm.addChange().withMsg("Additional line.");
+        scm.addChange().withMsg("Additional change.");
+
+        FlowDefinition fd = new CpsScmFlowDefinition(scm, "Jenkinsfile");
+
+        job.setDefinition(fd);
+
+        QueueTaskFuture<WorkflowRun> future =job.scheduleBuild2(0);
+        Assert.assertNotNull(future);
+
+        WorkflowRun completedBuild = jenkins.assertBuildStatus(Result.SUCCESS, future);
+    }
+    @Test
+    public void testScriptedPipelineMultilineCommit() throws Exception {
+        String agentLabel = "test-agent";
+        jenkins.createOnlineSlave(Label.get(agentLabel));
+        WorkflowJob job = jenkins.createProject(WorkflowJob.class, "test-scripted-pipeline");
+
+        URL pipelineFile = this.getClass().getClassLoader().getResource("test.Jenkinsfile");
+
+        Assert.assertNotNull(pipelineFile);
+
+        SCMSkipFakeSCM scm = new SCMSkipFakeSCM("Jenkinsfile", pipelineFile);
+        scm.addChange().withMsg("Some change [skip ci] in code.\n Additional line.");
 
         FlowDefinition fd = new CpsScmFlowDefinition(scm, "Jenkinsfile");
 
@@ -81,9 +103,9 @@ public class SCMSkipBuildWrapperTest {
         WorkflowRun completedBuild = jenkins.assertBuildStatus(Result.ABORTED, future);
 
         String expectedString = "SCM Skip: Pattern .*\\[(ci skip|skip ci)\\].* matched on message: "
-            + "Some change [skip ci] in code. Additional line.";
+            + "Some change [skip ci] in code.";
 
-        Assert.assertEquals("SCM Skip - build skipped", completedBuild.getDescription());
+        Assert.assertEquals(completedBuild.getDescription(), "SCM Skip - build skipped");
 
         jenkins.assertLogContains(expectedString, completedBuild);
     }

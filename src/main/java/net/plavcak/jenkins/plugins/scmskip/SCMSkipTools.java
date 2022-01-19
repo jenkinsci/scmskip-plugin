@@ -106,7 +106,7 @@ public class SCMSkipTools {
 
         String commitMessage  = combineChangeLogMessages(changeLogSet);
 
-        if (allSkipped) {
+        if (!allSkipped) {
             logger.println("SCM Skip: Pattern "
                     + matcher.getPattern().pattern()
                     + " NOT matched on message: "
