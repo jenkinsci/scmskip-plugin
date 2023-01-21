@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>3.4</version>
+        <version>4.54</version>
         <relativePath />
     </parent>
     <groupId>net.plavcak.jenkins</groupId>
@@ -12,23 +12,8 @@
     <version>1.0.4-SNAPSHOT</version>
     <packaging>hpi</packaging>
     <properties>
-        <!-- Baseline Jenkins version you use to build the plugin. Users must have this version or newer to run. -->
-        <jenkins.version>2.121.1</jenkins.version>
+        <jenkins.version>2.361.4</jenkins.version>
         <java.level>8</java.level>
-        <!-- Other properties you may want to use:
-          ~ jenkins-test-harness.version: Jenkins Test Harness version you use to test the plugin. For Jenkins version >= 1.580.1 use JTH 2.0 or higher.
-          ~ hpi-plugin.version: The HPI Maven Plugin version used by the plugin..
-          ~ stapler-plugin.version: The Stapler Maven plugin version required by the plugin.
-        -->
-        <jenkins.script-security.version>1.56</jenkins.script-security.version>
-        <jenkins.structs.version>1.17</jenkins.structs.version>
-        <workflow-api.version>2.33</workflow-api.version>
-        <workflow-basic-steps.version>2.15</workflow-basic-steps.version>
-        <workflow-job.version>2.32</workflow-job.version>
-        <workflow-cps-plugin.version>2.65</workflow-cps-plugin.version>
-        <workflow-step-api-plugin.version>2.19</workflow-step-api-plugin.version>
-        <workflow-support-plugin.version>3.2</workflow-support-plugin.version>
-        <workflow-aggregator.version>2.6</workflow-aggregator.version>
     </properties>
     <name>SCM Skip Plugin</name>
     <description>Plugin adds functionality of preventing a Job to be built when a specific pattern ([ci skip]) in SCM commit message is detected.</description>
@@ -39,58 +24,60 @@
             <url>https://opensource.org/licenses/MIT</url>
         </license>
     </licenses>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.jenkins.tools.bom</groupId>
+                <artifactId>bom-2.361.x</artifactId>
+                <version>1792.v0295db_e7c548</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <dependencies>
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>structs</artifactId>
-            <version>${jenkins.structs.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>script-security</artifactId>
-            <version>${jenkins.script-security.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jenkins-ci.plugins.workflow</groupId>
             <artifactId>workflow-step-api</artifactId>
-            <version>${workflow-step-api-plugin.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jenkins-ci.plugins.workflow</groupId>
             <artifactId>workflow-api</artifactId>
-            <version>${workflow-api.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.jenkins-ci.plugins.workflow</groupId>
             <artifactId>workflow-job</artifactId>
-            <version>${workflow-job.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.jenkins-ci.plugins.workflow</groupId>
             <artifactId>workflow-cps</artifactId>
-            <version>${workflow-cps-plugin.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.jenkins-ci.plugins.workflow</groupId>
             <artifactId>workflow-basic-steps</artifactId>
-            <version>${workflow-basic-steps.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jenkins-ci.plugins.workflow</groupId>
             <artifactId>workflow-support</artifactId>
-            <version>${workflow-support-plugin.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jenkinsci.plugins</groupId>
             <artifactId>pipeline-model-definition</artifactId>
-            <version>1.2.4</version>
             <scope>test</scope>
         </dependency>
 
@@ -98,11 +85,11 @@
 
     <!-- If you want this to appear on the wiki page: -->
     <developers>
-      <developer>
-        <id>plavc</id>
-        <name>Gregor Plavčak</name>
-        <email>gregor@plavcak.net</email>
-      </developer>
+        <developer>
+            <id>plavc</id>
+            <name>Gregor Plavčak</name>
+            <email>gregor@plavcak.net</email>
+        </developer>
     </developers>
 
     <url>https://github.com/jenkinsci/scmskip-plugin</url>
@@ -111,8 +98,8 @@
         <connection>scm:git:git://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
         <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
         <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
 
     <repositories>
         <repository>
