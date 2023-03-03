@@ -91,42 +91,27 @@ public class SCMSkipTools {
             logEmptyChangeLog(logger);
         }
 
-        ChangeLogSet.Entry matchedEntry = null;
-
+        var allEntriesMatch = true;
         for (Object entry : changeLogSet.getItems()) {
-            if (entry instanceof ChangeLogSet.Entry && inspectChangeSetEntry((Entry) entry, matcher)) {
-                matchedEntry = (Entry) entry;
+            if (entry instanceof ChangeLogSet.Entry && !inspectChangeSetEntry((Entry) entry, matcher)) {
+
+                if (LOGGER.isLoggable(Level.FINE)) {
+                    LOGGER.log(Level.FINE, "SCM Skip: Pattern "
+                            + matcher.getPattern().pattern()
+                            + " NOT matched on message: "
+                            + ((Entry) entry).getMsg());
+                }
+
+                allEntriesMatch = false;
                 break;
             }
         }
 
-        String commitMessage  = combineChangeLogMessages(changeLogSet);
-
-        if (matchedEntry == null) {
-            logger.println("SCM Skip: Pattern "
-                    + matcher.getPattern().pattern()
-                    + " NOT matched on message: "
-                    + commitMessage);
-            if (LOGGER.isLoggable(Level.FINE)) {
-                LOGGER.log(Level.FINE, "SCM Skip: Pattern "
-                        + matcher.getPattern().pattern()
-                        + " NOT matched on message: "
-                        + commitMessage);
-            }
-        } else {
-            logger.println("SCM Skip: Pattern "
+        logger.println("SCM Skip: Pattern "
                 + matcher.getPattern().pattern()
-                + " matched on message: "
-                + commitMessage);
-            if (LOGGER.isLoggable(Level.FINE)) {
-                LOGGER.log(Level.FINE, "SCM Skip: Pattern "
-                    + matcher.getPattern().pattern()
-                    + " matched on message: "
-                    + commitMessage);
-            }
-        }
-
-        return matchedEntry != null;
+                + (allEntriesMatch ? " MATCHED" : " does NOT match")
+                + " on all messages");
+        return allEntriesMatch;
     }
 
     public static void stopBuild(Run<?, ?> run) throws AbortException, IOException, ServletException {
@@ -151,12 +136,6 @@ public class SCMSkipTools {
 
     private static boolean inspectChangeSetEntry(ChangeLogSet.Entry entry, SCMSkipMatcher matcher) {
         return matcher.match(entry.getMsg());
-    }
-
-    private static String combineChangeLogMessages(ChangeLogSet<?> changeLogSet) {
-        return Arrays.stream(changeLogSet.getItems())
-            .map(i -> ((Entry) i).getMsg())
-            .collect(Collectors.joining(" "));
     }
 
     private static void logEmptyChangeLog(PrintStream logger) {
