@@ -91,14 +91,10 @@ public class SCMSkipTools {
             logEmptyChangeLog(logger);
         }
 
-        ChangeLogSet.Entry matchedEntry = null;
-
         boolean allSkipped = true;
         
         for (Object entry : changeLogSet.getItems()) {
-            if (entry instanceof ChangeLogSet.Entry && inspectChangeSetEntry((Entry) entry, matcher)) {
-                matchedEntry = (Entry) entry;
-            } else {
+            if (!entry instanceof ChangeLogSet.Entry && inspectChangeSetEntry((Entry) entry, matcher)) {
                 allSkipped = false;
                 break;
             }
