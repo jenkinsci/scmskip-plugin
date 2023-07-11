@@ -92,9 +92,10 @@ public class SCMSkipTools {
         }
 
         boolean allSkipped = true;
-        
+
         for (Object entry : changeLogSet.getItems()) {
-            if (!entry instanceof ChangeLogSet.Entry && inspectChangeSetEntry((Entry) entry, matcher)) {
+            if (!(entry instanceof ChangeLogSet.Entry && inspectChangeSetEntry((Entry) entry, matcher))) {
+                // if any of the changelog messages do not have the matching skip statement, then flag this
                 allSkipped = false;
                 break;
             }
