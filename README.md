@@ -53,18 +53,3 @@ When using pipeline with a Jenkinsfile syntax (declarative or scripted), the plu
 ```
 *When overriding the skip pattern in pipeline descriptor, make sure special characters are properly escaped (e.g. "\\").*
 
-## Release notes
-
-- ### 1.0.3
-    Resolved issue. Skip pattern matcher didn't match multiple lines in the commit message. 
-    Jira ticket: https://issues.jenkins-ci.org/browse/JENKINS-62751
-
-- ### 1.0.2
-    Resolved issue. Build number was not preserved on multibranch pipelines when build deletion enabled.
-    Jira ticket: https://issues.jenkins-ci.org/browse/JENKINS-61113
-
-- ### 1.0.1
-    Resolved issue. Skip pattern defined in Jenkinsfile wasn't overriding global configuration.
-    Jira ticket: https://issues.jenkins-ci.org/browse/JENKINS-57234
-- ### 1.0.0 
-    Initial release
