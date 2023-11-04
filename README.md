@@ -6,13 +6,20 @@ The plugin enables deletion of skipped builds. This feature is available for fre
 
 ## How it works
 
-After SCM checkout SCM Skip plugin matches ***last*** commit message with regular expression. For freestyle jobs, the plugin integrates early into lifecycle after SCM checkout. Therefore, nothing is executed on a positive regex match. 
+After SCM checkout SCM Skip plugin matches all commit messages with regular expression. For freestyle jobs, the plugin integrates early into lifecycle after SCM checkout. Therefore, nothing is executed on a positive regex match. 
 
 For pipeline jobs, the plugin can be enabled as a pipeline step and currently cannot be executed earlier in the Jenkins build lifecycle.
 
-If last commit message matches the pattern, the build is aborted (and deleted if enabled). For example, one of the matching messages would be:
+If all the commit message matches the pattern, the build is aborted (and deleted if enabled). For example, one of the matching messages would be:
 - `Updated version. New version: 1.0.1 [ci skip]`
 - `[ci skip] Some changes`
+- `[ci skip]`
+
+
+Example of non skipped build. In this case one of the checkins is not
+meant to be skipped, so the build is not aborted:
+- `Updated version. New version: 1.0.1 [ci skip]`
+- `BUG-135 Some changes`
 - `[ci skip]`
 
 ## Global Configuration

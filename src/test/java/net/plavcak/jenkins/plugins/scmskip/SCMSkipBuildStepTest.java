@@ -69,13 +69,12 @@ public class SCMSkipBuildStepTest {
         FreeStyleProject project = createFreestyleProject(null);
 
         FakeChangeLogSCM fakeScm = new FakeChangeLogSCM();
-        fakeScm.addChange().withMsg("Some change [ci skip] in code.");
-        fakeScm.addChange().withMsg("Another change.");
+        fakeScm.addChange().withMsg("Some change [ci skip] in code.\n Another message");
         project.setScm(fakeScm);
 
         FreeStyleBuild build = jenkins.assertBuildStatus(Result.ABORTED, project.scheduleBuild2(0));
         jenkins.assertLogContains("SCM Skip: Pattern .*\\[ci skip\\].* matched on message: "
-            + "Some change [ci skip] in code. Another change.", build);
+            + "Some change [ci skip] in code.", build);
     }
 
     @Test
