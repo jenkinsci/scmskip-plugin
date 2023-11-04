@@ -27,7 +27,7 @@
         <workflow-job.version>2.32</workflow-job.version>
         <workflow-cps-plugin.version>2.65</workflow-cps-plugin.version>
         <workflow-step-api-plugin.version>2.19</workflow-step-api-plugin.version>
-        <workflow-support-plugin.version>3.2</workflow-support-plugin.version>
+        <workflow-support-plugin.version>865.v43e78cc44e0d</workflow-support-plugin.version>
         <workflow-aggregator.version>2.6</workflow-aggregator.version>
     </properties>
     <name>SCM Skip Plugin</name>
