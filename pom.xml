@@ -21,7 +21,7 @@
           ~ stapler-plugin.version: The Stapler Maven plugin version required by the plugin.
         -->
         <jenkins.script-security.version>1.56</jenkins.script-security.version>
-        <jenkins.structs.version>1.17</jenkins.structs.version>
+        <jenkins.structs.version>325.vcb_307d2a_2782</jenkins.structs.version>
         <workflow-api.version>2.33</workflow-api.version>
         <workflow-basic-steps.version>2.15</workflow-basic-steps.version>
         <workflow-job.version>2.32</workflow-job.version>
