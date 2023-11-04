@@ -22,7 +22,7 @@
         -->
         <jenkins.script-security.version>1.56</jenkins.script-security.version>
         <jenkins.structs.version>1.17</jenkins.structs.version>
-        <workflow-api.version>2.33</workflow-api.version>
+        <workflow-api.version>1283.v99c10937efcb_</workflow-api.version>
         <workflow-basic-steps.version>2.15</workflow-basic-steps.version>
         <workflow-job.version>2.32</workflow-job.version>
         <workflow-cps-plugin.version>2.65</workflow-cps-plugin.version>
