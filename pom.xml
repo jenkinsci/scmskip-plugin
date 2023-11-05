@@ -1,34 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
         <version>4.75</version>
         <relativePath />
     </parent>
+
     <groupId>net.plavcak.jenkins</groupId>
     <artifactId>scmskip</artifactId>
     <version>${changelist}</version>
-    <properties>
-        <jenkins.version>2.414.3</jenkins.version>
-        <changelist>999999-SNAPSHOT</changelist>
-    </properties>
+    <packaging>hpi</packaging>
+
     <name>SCM Skip Plugin</name>
+    <url>https://github.com/jenkinsci/scmskip-plugin</url>
     <licenses>
         <license>
             <name>MIT License</name>
             <url>https://opensource.org/licenses/MIT</url>
         </license>
     </licenses>
+
+    <developers>
+      <developer>
+        <id>plavc</id>
+        <name>Gregor Plavčak</name>
+        <email>gregor@plavcak.net</email>
+      </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:https://github.com/jenkinsci/scmskip-plugin.git</connection>
+        <developerConnection>scm:git:git@github.com:jenkinsci/scmskip-plugin.git</developerConnection>
+        <url>https://github.com/jenkinsci/scmskip-plugin</url>
+        <tag>${scmTag}</tag>
+    </scm>
+
+    <properties>
+        <jenkins.version>2.414.3</jenkins.version>
+        <changelist>999999-SNAPSHOT</changelist>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>io.jenkins.tools.bom</groupId>
                 <artifactId>bom-2.414.x</artifactId>
                 <version>2555.v3190a_8a_c60c6</version>
-                <scope>import</scope>
                 <type>pom</type>
+                <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -75,23 +97,6 @@
         </dependency>
 
     </dependencies>
-
-    <developers>
-      <developer>
-        <id>plavc</id>
-        <name>Gregor Plavčak</name>
-        <email>gregor@plavcak.net</email>
-      </developer>
-    </developers>
-
-    <url>https://github.com/jenkinsci/scmskip-plugin</url>
-
-    <scm>
-        <connection>scm:git:https://github.com/jenkinsci/scmskip-plugin.git</connection>
-        <developerConnection>scm:git:git@github.com:jenkinsci/scmskip-plugin.git</developerConnection>
-        <url>https://github.com/jenkinsci/scmskip-plugin</url>
-        <tag>${scmTag}</tag>
-    </scm>
 
     <repositories>
         <repository>
