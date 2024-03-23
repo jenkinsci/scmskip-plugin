@@ -9,6 +9,7 @@ import hudson.model.BuildListener;
 import hudson.tasks.BuildWrapper;
 import hudson.tasks.BuildWrapperDescriptor;
 import net.sf.json.JSONObject;
+import org.jenkinsci.plugins.workflow.steps.FlowInterruptedException;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.StaplerRequest;
@@ -59,14 +60,14 @@ public class SCMSkipBuildWrapper extends BuildWrapper {
     }
 
     @Override
-    public Environment setUp(AbstractBuild build, Launcher launcher, BuildListener listener) throws IOException {
-
-        if(SCMSkipTools.inspectChangeSet(build, skipMatcher, listener)) {
+    public Environment setUp(AbstractBuild build, Launcher launcher, BuildListener listener)
+            throws IOException, FlowInterruptedException {
+        if (SCMSkipTools.inspectChangeSetAndCause(build, skipMatcher, listener)) {
             SCMSkipTools.tagRunForDeletion(build, deleteBuild);
 
             try {
                 SCMSkipTools.stopBuild(build);
-            } catch (AbortException e) {
+            } catch (AbortException | FlowInterruptedException e) {
                 throw e;
             } catch (Exception e) {
                 if (LOGGER.isLoggable(Level.FINE)) {

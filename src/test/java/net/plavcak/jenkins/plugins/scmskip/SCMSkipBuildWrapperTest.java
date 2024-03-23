@@ -1,5 +1,7 @@
 package net.plavcak.jenkins.plugins.scmskip;
 
+import hudson.model.Cause;
+import hudson.model.CauseAction;
 import hudson.model.FreeStyleProject;
 import hudson.model.Label;
 import hudson.model.Result;
@@ -16,6 +18,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
@@ -44,14 +47,7 @@ public class SCMSkipBuildWrapperTest {
     public void testScriptedPipelineEmptyChangeLog() throws Exception {
         String agentLabel = "test-agent";
         jenkins.createOnlineSlave(Label.get(agentLabel));
-        WorkflowJob job = jenkins.createProject(WorkflowJob.class, "test-scripted-pipeline");
-
-        InputStream pipelineStream = this.getClass().getClassLoader().getResourceAsStream("test.Jenkinsfile");
-
-        Assert.assertNotNull(pipelineStream);
-
-        String pipelineScript = IOUtils.toString(pipelineStream);
-        job.setDefinition(new CpsFlowDefinition(pipelineScript, true));
+        WorkflowJob job = preparePipelineJob();
         WorkflowRun completedBuild = jenkins.assertBuildStatusSuccess(job.scheduleBuild2(0));
         String expectedString = "SCM Skip: Changelog is empty!";
         jenkins.assertLogContains(expectedString, completedBuild);
@@ -61,29 +57,17 @@ public class SCMSkipBuildWrapperTest {
     public void testScriptedPipeline() throws Exception {
         String agentLabel = "test-agent";
         jenkins.createOnlineSlave(Label.get(agentLabel));
-        WorkflowJob job = jenkins.createProject(WorkflowJob.class, "test-scripted-pipeline");
-
-        URL pipelineFile = this.getClass().getClassLoader().getResource("test.Jenkinsfile");
-
-        Assert.assertNotNull(pipelineFile);
-
-        SCMSkipFakeSCM scm = new SCMSkipFakeSCM("Jenkinsfile", pipelineFile);
-        scm.addChange().withMsg("Some change [skip ci] in code.");
-        scm.addChange().withMsg("Additional change.");
-
-        FlowDefinition fd = new CpsScmFlowDefinition(scm, "Jenkinsfile");
-
-        job.setDefinition(fd);
+        WorkflowJob job = preparePipelineJob("Some change [skip ci] in code.",
+                "Additional change.");
 
         QueueTaskFuture<WorkflowRun> future =job.scheduleBuild2(0);
         Assert.assertNotNull(future);
 
         WorkflowRun completedBuild = jenkins.assertBuildStatus(Result.SUCCESS, future);
+        jenkins.assertLogContains("after skip", completedBuild);
     }
-    @Test
-    public void testScriptedPipelineMultilineCommit() throws Exception {
-        String agentLabel = "test-agent";
-        jenkins.createOnlineSlave(Label.get(agentLabel));
+
+    private WorkflowJob preparePipelineJob(String... commitMessages) throws IOException {
         WorkflowJob job = jenkins.createProject(WorkflowJob.class, "test-scripted-pipeline");
 
         URL pipelineFile = this.getClass().getClassLoader().getResource("test.Jenkinsfile");
@@ -91,11 +75,20 @@ public class SCMSkipBuildWrapperTest {
         Assert.assertNotNull(pipelineFile);
 
         SCMSkipFakeSCM scm = new SCMSkipFakeSCM("Jenkinsfile", pipelineFile);
-        scm.addChange().withMsg("Some change [skip ci] in code.\n Additional line.");
-
+        for (String message: commitMessages) {
+            scm.addChange().withMsg(message);
+        }
         FlowDefinition fd = new CpsScmFlowDefinition(scm, "Jenkinsfile");
 
         job.setDefinition(fd);
+        return job;
+    }
+
+    @Test
+    public void testScriptedPipelineMultilineCommit() throws Exception {
+        String agentLabel = "test-agent";
+        jenkins.createOnlineSlave(Label.get(agentLabel));
+        WorkflowJob job = preparePipelineJob("Some change [skip ci] in code.\n Additional line.");
 
         QueueTaskFuture<WorkflowRun> future =job.scheduleBuild2(0);
         Assert.assertNotNull(future);
@@ -108,5 +101,20 @@ public class SCMSkipBuildWrapperTest {
         Assert.assertEquals(completedBuild.getDescription(), "SCM Skip - build skipped");
 
         jenkins.assertLogContains(expectedString, completedBuild);
+        jenkins.assertLogContains("before skip", completedBuild);
+        jenkins.assertLogNotContains("after skip", completedBuild);
+    }
+
+    @Test
+    public void testPipelineUserIdCause() throws Exception {
+        String agentLabel = "test-agent";
+        jenkins.createOnlineSlave(Label.get(agentLabel));
+        WorkflowJob job = preparePipelineJob("Some change [skip ci] in code.\n Additional line.");
+        QueueTaskFuture<WorkflowRun> future =job.scheduleBuild2(0,
+                new CauseAction(new Cause.UserIdCause()));
+        Assert.assertNotNull(future);
+
+        WorkflowRun completedBuild = jenkins.assertBuildStatus(Result.SUCCESS, future);
+        jenkins.assertLogContains("after skip", completedBuild);
     }
 }
