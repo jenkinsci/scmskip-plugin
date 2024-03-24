@@ -1,6 +1,7 @@
 package net.plavcak.jenkins.plugins.scmskip;
 
 import hudson.AbortException;
+import hudson.EnvVars;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -12,6 +13,7 @@ import hudson.tasks.Builder;
 import jenkins.tasks.SimpleBuildStep;
 import net.sf.json.JSONObject;
 import org.jenkinsci.Symbol;
+import org.jenkinsci.plugins.workflow.steps.FlowInterruptedException;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.StaplerRequest;
@@ -66,14 +68,15 @@ public class SCMSkipBuildStep extends Builder implements SimpleBuildStep {
     }
 
     @Override
-    public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath workspace, @Nonnull Launcher launcher, @Nonnull TaskListener listener) throws IOException {
-
-        if(SCMSkipTools.inspectChangeSet(run, skipMatcher, listener)) {
+    public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath workspace, @Nonnull EnvVars env,
+                        @Nonnull Launcher launcher, @Nonnull TaskListener listener)
+            throws IOException, FlowInterruptedException {
+        if (SCMSkipTools.inspectChangeSetAndCause(run, skipMatcher, listener)) {
             SCMSkipTools.tagRunForDeletion(run, deleteBuild);
 
             try {
                 SCMSkipTools.stopBuild(run);
-            } catch (AbortException e) {
+            } catch (AbortException | FlowInterruptedException e) {
                 throw e;
             } catch (Exception e) {
                 if (LOGGER.isLoggable(Level.FINE)) {
