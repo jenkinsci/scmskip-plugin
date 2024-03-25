@@ -3,7 +3,6 @@ package net.plavcak.jenkins.plugins.scmskip;
 import hudson.EnvVars;
 import hudson.model.EnvironmentContributingAction;
 import hudson.model.Run;
-
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
@@ -11,8 +10,7 @@ public class SCMSkipDeleteEnvironmentAction implements EnvironmentContributingAc
 
     private transient boolean deleteBuild;
 
-    public SCMSkipDeleteEnvironmentAction() {
-    }
+    public SCMSkipDeleteEnvironmentAction() {}
 
     public SCMSkipDeleteEnvironmentAction(boolean deleteBuild) {
         this.deleteBuild = deleteBuild;
@@ -45,7 +43,7 @@ public class SCMSkipDeleteEnvironmentAction implements EnvironmentContributingAc
     }
 
     @Override
-    public void buildEnvironment(@Nonnull Run<?,?> run, @Nonnull EnvVars env) {
+    public void buildEnvironment(@Nonnull Run<?, ?> run, @Nonnull EnvVars env) {
         env.put(SCMSkipConstants.DELETE_BUILD, String.valueOf(deleteBuild));
     }
 }

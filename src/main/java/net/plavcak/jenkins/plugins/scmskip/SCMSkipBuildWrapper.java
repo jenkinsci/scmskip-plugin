@@ -8,16 +8,15 @@ import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
 import hudson.tasks.BuildWrapper;
 import hudson.tasks.BuildWrapperDescriptor;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.annotation.Nonnull;
 import net.sf.json.JSONObject;
 import org.jenkinsci.plugins.workflow.steps.FlowInterruptedException;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.StaplerRequest;
-
-import javax.annotation.Nonnull;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class SCMSkipBuildWrapper extends BuildWrapper {
 
@@ -78,7 +77,7 @@ public class SCMSkipBuildWrapper extends BuildWrapper {
             SCMSkipTools.tagRunForDeletion(build, false);
         }
 
-        return new Environment() { };
+        return new Environment() {};
     }
 
     @Override

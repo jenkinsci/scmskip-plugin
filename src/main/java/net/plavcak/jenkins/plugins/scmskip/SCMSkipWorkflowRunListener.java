@@ -2,10 +2,9 @@ package net.plavcak.jenkins.plugins.scmskip;
 
 import hudson.Extension;
 import hudson.model.listeners.RunListener;
-import org.jenkinsci.plugins.workflow.job.WorkflowRun;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 
 @Extension
 public class SCMSkipWorkflowRunListener extends RunListener<WorkflowRun> {

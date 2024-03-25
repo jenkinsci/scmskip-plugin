@@ -7,8 +7,8 @@ import hudson.model.Label;
 import hudson.model.Result;
 import hudson.model.queue.QueueTaskFuture;
 import hudson.tasks.BuildWrapperDescriptor;
-import org.apache.commons.io.IOUtils;
-import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
+import java.io.IOException;
+import java.net.URL;
 import org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition;
 import org.jenkinsci.plugins.workflow.flow.FlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
@@ -17,10 +17,6 @@ import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 
 public class SCMSkipBuildWrapperTest {
 
@@ -33,8 +29,7 @@ public class SCMSkipBuildWrapperTest {
 
         BuildWrapperDescriptor descriptor = new SCMSkipBuildWrapper.DescriptorImpl();
 
-        project.getBuildWrappersList().add(
-                new SCMSkipBuildWrapper(false, null));
+        project.getBuildWrappersList().add(new SCMSkipBuildWrapper(false, null));
 
         project = jenkins.configRoundtrip(project);
 
@@ -57,10 +52,9 @@ public class SCMSkipBuildWrapperTest {
     public void testScriptedPipeline() throws Exception {
         String agentLabel = "test-agent";
         jenkins.createOnlineSlave(Label.get(agentLabel));
-        WorkflowJob job = preparePipelineJob("Some change [skip ci] in code.",
-                "Additional change.");
+        WorkflowJob job = preparePipelineJob("Some change [skip ci] in code.", "Additional change.");
 
-        QueueTaskFuture<WorkflowRun> future =job.scheduleBuild2(0);
+        QueueTaskFuture<WorkflowRun> future = job.scheduleBuild2(0);
         Assert.assertNotNull(future);
 
         WorkflowRun completedBuild = jenkins.assertBuildStatus(Result.SUCCESS, future);
@@ -75,7 +69,7 @@ public class SCMSkipBuildWrapperTest {
         Assert.assertNotNull(pipelineFile);
 
         SCMSkipFakeSCM scm = new SCMSkipFakeSCM("Jenkinsfile", pipelineFile);
-        for (String message: commitMessages) {
+        for (String message : commitMessages) {
             scm.addChange().withMsg(message);
         }
         FlowDefinition fd = new CpsScmFlowDefinition(scm, "Jenkinsfile");
@@ -90,13 +84,13 @@ public class SCMSkipBuildWrapperTest {
         jenkins.createOnlineSlave(Label.get(agentLabel));
         WorkflowJob job = preparePipelineJob("Some change [skip ci] in code.\n Additional line.");
 
-        QueueTaskFuture<WorkflowRun> future =job.scheduleBuild2(0);
+        QueueTaskFuture<WorkflowRun> future = job.scheduleBuild2(0);
         Assert.assertNotNull(future);
 
         WorkflowRun completedBuild = jenkins.assertBuildStatus(Result.ABORTED, future);
 
-        String expectedString = "SCM Skip: Pattern .*\\[(ci skip|skip ci)\\].* matched on message: "
-            + "Some change [skip ci] in code.";
+        String expectedString =
+                "SCM Skip: Pattern .*\\[(ci skip|skip ci)\\].* matched on message: " + "Some change [skip ci] in code.";
 
         Assert.assertEquals(completedBuild.getDescription(), "SCM Skip - build skipped");
 
@@ -110,8 +104,7 @@ public class SCMSkipBuildWrapperTest {
         String agentLabel = "test-agent";
         jenkins.createOnlineSlave(Label.get(agentLabel));
         WorkflowJob job = preparePipelineJob("Some change [skip ci] in code.\n Additional line.");
-        QueueTaskFuture<WorkflowRun> future =job.scheduleBuild2(0,
-                new CauseAction(new Cause.UserIdCause()));
+        QueueTaskFuture<WorkflowRun> future = job.scheduleBuild2(0, new CauseAction(new Cause.UserIdCause()));
         Assert.assertNotNull(future);
 
         WorkflowRun completedBuild = jenkins.assertBuildStatus(Result.SUCCESS, future);
