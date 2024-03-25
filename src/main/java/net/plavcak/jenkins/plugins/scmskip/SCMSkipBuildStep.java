@@ -10,6 +10,10 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.annotation.Nonnull;
 import jenkins.tasks.SimpleBuildStep;
 import net.sf.json.JSONObject;
 import org.jenkinsci.Symbol;
@@ -17,11 +21,6 @@ import org.jenkinsci.plugins.workflow.steps.FlowInterruptedException;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.StaplerRequest;
-
-import javax.annotation.Nonnull;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class SCMSkipBuildStep extends Builder implements SimpleBuildStep {
 
@@ -68,8 +67,12 @@ public class SCMSkipBuildStep extends Builder implements SimpleBuildStep {
     }
 
     @Override
-    public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath workspace, @Nonnull EnvVars env,
-                        @Nonnull Launcher launcher, @Nonnull TaskListener listener)
+    public void perform(
+            @Nonnull Run<?, ?> run,
+            @Nonnull FilePath workspace,
+            @Nonnull EnvVars env,
+            @Nonnull Launcher launcher,
+            @Nonnull TaskListener listener)
             throws IOException, FlowInterruptedException {
         if (SCMSkipTools.inspectChangeSetAndCause(run, skipMatcher, listener)) {
             SCMSkipTools.tagRunForDeletion(run, deleteBuild);
@@ -124,6 +127,5 @@ public class SCMSkipBuildStep extends Builder implements SimpleBuildStep {
         public void setSkipPattern(String skipPattern) {
             this.skipPattern = skipPattern;
         }
-
     }
 }

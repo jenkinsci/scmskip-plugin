@@ -3,7 +3,6 @@ package net.plavcak.jenkins.plugins.scmskip;
 import hudson.Extension;
 import hudson.model.*;
 import hudson.model.listeners.RunListener;
-
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,7 +15,7 @@ public class SCMSkipRunListener extends RunListener<AbstractBuild> {
     @Override
     public void onFinalized(AbstractBuild build) {
         try {
-            if (SCMSkipTools.isBuildToDelete((Run)build)) {
+            if (SCMSkipTools.isBuildToDelete((Run) build)) {
                 SCMSkipTools.deleteBuild(build);
             }
         } catch (IOException e) {

@@ -5,15 +5,14 @@ import hudson.Launcher;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.scm.SCMRevisionState;
-import org.apache.commons.io.IOUtils;
-import org.jvnet.hudson.test.FakeChangeLogSCM;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.io.IOUtils;
+import org.jvnet.hudson.test.FakeChangeLogSCM;
 
 public class SCMSkipFakeSCM extends FakeChangeLogSCM {
     private final String path;
@@ -29,6 +28,7 @@ public class SCMSkipFakeSCM extends FakeChangeLogSCM {
         this.contents = IOUtils.toByteArray(resource.openStream());
     }
 
+    @Override
     public EntryImpl addChange() {
         EntryImpl e = new EntryImpl();
         entries.add(e);
@@ -36,12 +36,19 @@ public class SCMSkipFakeSCM extends FakeChangeLogSCM {
     }
 
     @Override
-    public void checkout(Run<?, ?> build, Launcher launcher, FilePath remoteDir, TaskListener listener, File changeLogFile, SCMRevisionState baseline) throws IOException, InterruptedException {
+    public void checkout(
+            Run<?, ?> build,
+            Launcher launcher,
+            FilePath remoteDir,
+            TaskListener listener,
+            File changeLogFile,
+            SCMRevisionState baseline)
+            throws IOException, InterruptedException {
         new FilePath(changeLogFile).touch(0);
         build.addAction(new ChangelogAction(entries, changeLogFile.getName()));
         entries = new ArrayList<>();
 
-        listener.getLogger().println("Staging "+path);
+        listener.getLogger().println("Staging " + path);
         OutputStream os = remoteDir.child(path).write();
         IOUtils.write(contents, os);
         os.close();

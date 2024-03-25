@@ -3,13 +3,12 @@ package net.plavcak.jenkins.plugins.scmskip;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
+import java.io.IOException;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.FakeChangeLogSCM;
 import org.jvnet.hudson.test.JenkinsRule;
-
-import java.io.IOException;
 
 public class SCMSkipBuildStepTest {
 
@@ -23,8 +22,7 @@ public class SCMSkipBuildStepTest {
         project = jenkins.configRoundtrip(project);
 
         jenkins.assertEqualDataBoundBeans(
-                new SCMSkipBuildStep(),
-                project.getBuilders().get(0));
+                new SCMSkipBuildStep(), project.getBuilders().get(0));
     }
 
     @Test
@@ -47,7 +45,8 @@ public class SCMSkipBuildStepTest {
         FreeStyleBuild build = jenkins.assertBuildStatus(Result.ABORTED, project.scheduleBuild2(0));
 
         Assert.assertEquals("SCM Skip - build skipped", build.getDescription());
-        jenkins.assertLogContains("SCM Skip: Pattern .*\\[ci skip\\].* matched on message: Some change [ci skip] in code.", build);
+        jenkins.assertLogContains(
+                "SCM Skip: Pattern .*\\[ci skip\\].* matched on message: Some change [ci skip] in code.", build);
     }
 
     @Test
@@ -61,7 +60,9 @@ public class SCMSkipBuildStepTest {
         FreeStyleBuild build = jenkins.assertBuildStatus(Result.ABORTED, project.scheduleBuild2(0));
 
         Assert.assertEquals("SCM Skip - build skipped", build.getDescription());
-        jenkins.assertLogContains("SCM Skip: Pattern .*\\[(ci skip|skip ci)\\].* matched on message: Some change [skip ci] in code.", build);
+        jenkins.assertLogContains(
+                "SCM Skip: Pattern .*\\[(ci skip|skip ci)\\].* matched on message: Some change [skip ci] in code.",
+                build);
     }
 
     @Test
@@ -73,14 +74,15 @@ public class SCMSkipBuildStepTest {
         project.setScm(fakeScm);
 
         FreeStyleBuild build = jenkins.assertBuildStatus(Result.ABORTED, project.scheduleBuild2(0));
-        jenkins.assertLogContains("SCM Skip: Pattern .*\\[ci skip\\].* matched on message: "
-            + "Some change [ci skip] in code.", build);
+        jenkins.assertLogContains(
+                "SCM Skip: Pattern .*\\[ci skip\\].* matched on message: " + "Some change [ci skip] in code.", build);
     }
 
     @Test
     public void testBuildWithGlobalConfiguration() {
 
-        SCMSkipBuildStep.DescriptorImpl descriptor = jenkins.getInstance().getDescriptorByType(SCMSkipBuildStep.DescriptorImpl.class);
+        SCMSkipBuildStep.DescriptorImpl descriptor =
+                jenkins.getInstance().getDescriptorByType(SCMSkipBuildStep.DescriptorImpl.class);
 
         Assert.assertEquals(SCMSkipConstants.DEFAULT_PATTERN, descriptor.getSkipPattern());
 
