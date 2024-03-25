@@ -9,8 +9,8 @@ import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.scm.ChangeLogSet;
-import hudson.scm.ChangeLogSet.Entry;
 import jenkins.model.CauseOfInterruption;
+import jenkins.model.Jenkins;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 import org.jenkinsci.plugins.workflow.steps.FlowInterruptedException;
 
@@ -108,10 +108,11 @@ public class SCMSkipTools {
         boolean allSkipped = true;
 
         for (ChangeLogSet.Entry entry : changeLogSet) {
-            if (!inspectChangeSetEntry(entry, matcher)) {
+            String fullMessage = getFullMessage(entry);
+            if (!matcher.match(fullMessage)) {
                 // if any of the changelog messages do not have the matching skip statement, then flag this
                 allSkipped = false;
-                notMatched = entry.getMsg();
+                notMatched = fullMessage;
                 break;
             }
         }
@@ -176,13 +177,9 @@ public class SCMSkipTools {
         }
     }
 
-    private static boolean inspectChangeSetEntry(ChangeLogSet.Entry entry, SCMSkipMatcher matcher) {
-        return matcher.match(entry.getMsg());
-    }
-
     private static String combineChangeLogMessages(ChangeLogSet<?> changeLogSet) {
         return StreamSupport.stream(changeLogSet.spliterator(), false)
-            .map(Entry::getMsg)
+            .map(SCMSkipTools::getFullMessage)
             .collect(Collectors.joining(" "));
     }
 
@@ -191,5 +188,12 @@ public class SCMSkipTools {
         if (LOGGER.isLoggable(Level.FINE)) {
             LOGGER.log(Level.FINE, "Changelog is empty!");
         }
+    }
+
+    private static String getFullMessage(ChangeLogSet.Entry entry) {
+        if (Jenkins.get().getPlugin("git") != null) {
+            return GitMessageExtractor.getFullMessage(entry);
+        }
+        return entry.getMsg();
     }
 }
