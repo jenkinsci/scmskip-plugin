@@ -1,5 +1,6 @@
 package net.plavcak.jenkins.plugins.scmskip;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.AbortException;
 import hudson.EnvVars;
 import hudson.Extension;
@@ -13,7 +14,6 @@ import hudson.tasks.Builder;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.Nonnull;
 import jenkins.tasks.SimpleBuildStep;
 import net.sf.json.JSONObject;
 import org.jenkinsci.Symbol;
@@ -68,11 +68,11 @@ public class SCMSkipBuildStep extends Builder implements SimpleBuildStep {
 
     @Override
     public void perform(
-            @Nonnull Run<?, ?> run,
-            @Nonnull FilePath workspace,
-            @Nonnull EnvVars env,
-            @Nonnull Launcher launcher,
-            @Nonnull TaskListener listener)
+            @NonNull Run<?, ?> run,
+            @NonNull FilePath workspace,
+            @NonNull EnvVars env,
+            @NonNull Launcher launcher,
+            @NonNull TaskListener listener)
             throws IOException, FlowInterruptedException {
         if (SCMSkipTools.inspectChangeSetAndCause(run, skipMatcher, listener)) {
             SCMSkipTools.tagRunForDeletion(run, deleteBuild);
@@ -107,6 +107,7 @@ public class SCMSkipBuildStep extends Builder implements SimpleBuildStep {
             return false;
         }
 
+        @NonNull
         @Override
         public String getDisplayName() {
             return "SCM Skip Step";

@@ -1,5 +1,6 @@
 package net.plavcak.jenkins.plugins.scmskip;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.AbortException;
 import hudson.Extension;
 import hudson.Launcher;
@@ -11,7 +12,6 @@ import hudson.tasks.BuildWrapperDescriptor;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.Nonnull;
 import net.sf.json.JSONObject;
 import org.jenkinsci.plugins.workflow.steps.FlowInterruptedException;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -95,7 +95,7 @@ public class SCMSkipBuildWrapper extends BuildWrapper {
             return true;
         }
 
-        @Nonnull
+        @NonNull
         @Override
         public String getDisplayName() {
             return "SCM Skip";

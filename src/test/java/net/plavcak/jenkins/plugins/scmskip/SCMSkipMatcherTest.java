@@ -1,6 +1,6 @@
 package net.plavcak.jenkins.plugins.scmskip;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Assert;
 import org.junit.Test;

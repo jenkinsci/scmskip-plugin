@@ -1,10 +1,10 @@
 package net.plavcak.jenkins.plugins.scmskip;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.EnvVars;
 import hudson.model.EnvironmentContributingAction;
 import hudson.model.Run;
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
 
 public class SCMSkipDeleteEnvironmentAction implements EnvironmentContributingAction {
 
@@ -43,7 +43,7 @@ public class SCMSkipDeleteEnvironmentAction implements EnvironmentContributingAc
     }
 
     @Override
-    public void buildEnvironment(@Nonnull Run<?, ?> run, @Nonnull EnvVars env) {
+    public void buildEnvironment(@NonNull Run<?, ?> run, @NonNull EnvVars env) {
         env.put(SCMSkipConstants.DELETE_BUILD, String.valueOf(deleteBuild));
     }
 }
