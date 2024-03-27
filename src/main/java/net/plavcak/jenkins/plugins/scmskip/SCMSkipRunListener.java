@@ -19,9 +19,7 @@ public class SCMSkipRunListener extends RunListener<AbstractBuild> {
                 SCMSkipTools.deleteBuild(build);
             }
         } catch (IOException e) {
-            if (LOGGER.isLoggable(Level.FINE)) {
-                LOGGER.log(Level.FINE, "SCM Skip", e);
-            }
+            LOGGER.log(Level.FINE, "SCM Skip", e);
         }
     }
 }

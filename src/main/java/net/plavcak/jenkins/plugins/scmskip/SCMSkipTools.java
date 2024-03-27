@@ -19,10 +19,15 @@ import java.util.stream.StreamSupport;
 import javax.servlet.ServletException;
 import jenkins.model.CauseOfInterruption;
 import jenkins.model.Jenkins;
+import jenkins.scm.RunWithSCM;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 import org.jenkinsci.plugins.workflow.steps.FlowInterruptedException;
 
 public class SCMSkipTools {
+
+    private SCMSkipTools() {
+        // utility class
+    }
 
     private static final Logger LOGGER = Logger.getLogger(SCMSkipTools.class.getName());
 
@@ -32,9 +37,7 @@ public class SCMSkipTools {
      * @throws IOException if build cannot be deleted
      */
     public static void deleteBuild(AbstractBuild<?, ?> build) throws IOException {
-        if (LOGGER.isLoggable(Level.FINE)) {
-            LOGGER.log(Level.FINE, "Deleting AbstractBuild: '" + build.getId() + "'");
-        }
+        LOGGER.log(Level.FINE, () -> "Deleting AbstractBuild: '" + build.getId() + "'");
         build.delete();
         AbstractProject<?, ?> project = build.getProject();
         project.updateNextBuildNumber(build.getNumber());
@@ -47,9 +50,7 @@ public class SCMSkipTools {
      * @throws IOException if build cannot be deleted
      */
     public static void deleteRun(Run<?, ?> run) throws IOException {
-        if (LOGGER.isLoggable(Level.FINE)) {
-            LOGGER.log(Level.FINE, "Deleting Run: '" + run.getId() + "'");
-        }
+        LOGGER.log(Level.FINE, () -> "Deleting Run: '" + run.getId() + "'");
         run.delete();
         Job<?, ?> job = run.getParent();
         job.updateNextBuildNumber(run.number);
@@ -57,9 +58,8 @@ public class SCMSkipTools {
     }
 
     public static void tagRunForDeletion(Run<?, ?> run, boolean deleteBuild) throws IOException {
-        if (LOGGER.isLoggable(Level.FINE)) {
-            LOGGER.log(Level.FINE, "Build '" + run.getDisplayName() + "' set to delete: " + deleteBuild);
-        }
+        LOGGER.log(Level.FINE, () -> "Build '" + run.getDisplayName() + "' set to delete: " + deleteBuild);
+
         run.addAction(new SCMSkipDeleteEnvironmentAction(deleteBuild));
         run.save();
     }
@@ -80,10 +80,8 @@ public class SCMSkipTools {
         if (run.getCauses().stream().anyMatch(cause -> cause instanceof Cause.UserIdCause)) {
             return false;
         }
-        if (run instanceof WorkflowRun) {
-            return inspectChangeSet(((WorkflowRun) run).getChangeSets(), matcher, listener.getLogger());
-        } else if (run instanceof AbstractBuild) {
-            return inspectChangeSet(((AbstractBuild<?, ?>) run).getChangeSets(), matcher, listener.getLogger());
+        if (run instanceof RunWithSCM) {
+            return inspectChangeSet(((RunWithSCM<?, ?>) run).getChangeSets(), matcher, listener.getLogger());
         }
 
         return false;
@@ -118,29 +116,16 @@ public class SCMSkipTools {
 
         String commitMessage = combineChangeLogMessages(changeLogSet);
 
+        String logMessage;
         if (!allSkipped) {
-            logger.println(
-                    "SCM Skip: Pattern " + matcher.getPattern().pattern() + " NOT matched on message: " + notMatched);
-            if (LOGGER.isLoggable(Level.FINE)) {
-                LOGGER.log(
-                        Level.FINE,
-                        "SCM Skip: Pattern "
-                                + matcher.getPattern().pattern()
-                                + " NOT matched on message: "
-                                + notMatched);
-            }
+            logMessage =
+                    "SCM Skip: Pattern " + matcher.getPattern().pattern() + " NOT matched on message: " + notMatched;
         } else {
-            logger.println(
-                    "SCM Skip: Pattern " + matcher.getPattern().pattern() + " matched on message: " + commitMessage);
-            if (LOGGER.isLoggable(Level.FINE)) {
-                LOGGER.log(
-                        Level.FINE,
-                        "SCM Skip: Pattern "
-                                + matcher.getPattern().pattern()
-                                + " matched on message: "
-                                + commitMessage);
-            }
+            logMessage =
+                    "SCM Skip: Pattern " + matcher.getPattern().pattern() + " matched on message: " + commitMessage;
         }
+        logger.println(logMessage);
+        LOGGER.log(Level.FINE, logMessage);
 
         return allSkipped;
     }
@@ -156,9 +141,7 @@ public class SCMSkipTools {
         run.setResult(Result.ABORTED);
         run.save();
 
-        if (LOGGER.isLoggable(Level.FINE)) {
-            LOGGER.log(Level.FINE, "Stopping build: '" + run.getId() + "'");
-        }
+        LOGGER.log(Level.FINE, () -> "Stopping build: '" + run.getId() + "'");
 
         if (run instanceof WorkflowRun) {
             throw new FlowInterruptedException(Result.NOT_BUILT, true, new CauseOfInterruption() {
@@ -183,9 +166,7 @@ public class SCMSkipTools {
 
     private static void logEmptyChangeLog(PrintStream logger) {
         logger.println("SCM Skip: Changelog is empty!");
-        if (LOGGER.isLoggable(Level.FINE)) {
-            LOGGER.log(Level.FINE, "Changelog is empty!");
-        }
+        LOGGER.log(Level.FINE, "Changelog is empty!");
     }
 
     private static String getFullMessage(ChangeLogSet.Entry entry) {

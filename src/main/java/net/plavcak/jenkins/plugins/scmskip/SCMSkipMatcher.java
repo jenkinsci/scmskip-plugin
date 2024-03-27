@@ -2,6 +2,7 @@ package net.plavcak.jenkins.plugins.scmskip;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.commons.lang.StringUtils;
 
 public class SCMSkipMatcher {
 
@@ -16,7 +17,7 @@ public class SCMSkipMatcher {
     }
 
     public boolean match(String message) {
-        if (message == null || message.isEmpty()) {
+        if (StringUtils.isEmpty(message)) {
             return false;
         }
         final Matcher matcher = pattern.matcher(message);
@@ -28,7 +29,7 @@ public class SCMSkipMatcher {
     }
 
     public void setPattern(String regex) {
-        if (regex == null || regex.isEmpty()) {
+        if (StringUtils.isEmpty(regex)) {
             regex = SCMSkipConstants.DEFAULT_PATTERN;
         }
         this.pattern = Pattern.compile(regex, Pattern.DOTALL);

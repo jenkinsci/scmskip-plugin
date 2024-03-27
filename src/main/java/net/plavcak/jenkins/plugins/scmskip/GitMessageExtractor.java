@@ -4,6 +4,10 @@ import hudson.plugins.git.GitChangeSet;
 import hudson.scm.ChangeLogSet;
 
 public class GitMessageExtractor {
+    private GitMessageExtractor() {
+        // utility class
+    }
+
     public static String getFullMessage(ChangeLogSet.Entry entry) {
         if (entry instanceof GitChangeSet) {
             return ((GitChangeSet) entry).getComment();
