@@ -82,9 +82,7 @@ public class SCMSkipBuildStep extends Builder implements SimpleBuildStep {
             } catch (AbortException | FlowInterruptedException e) {
                 throw e;
             } catch (Exception e) {
-                if (LOGGER.isLoggable(Level.FINE)) {
-                    LOGGER.log(Level.FINE, "SCM Skip Build Step", e);
-                }
+                LOGGER.log(Level.FINE, "SCM Skip Build Step", e);
             }
         } else {
             SCMSkipTools.tagRunForDeletion(run, false);

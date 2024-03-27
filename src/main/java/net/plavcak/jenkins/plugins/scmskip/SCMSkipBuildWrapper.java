@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.sf.json.JSONObject;
+import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.plugins.workflow.steps.FlowInterruptedException;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -46,7 +47,7 @@ public class SCMSkipBuildWrapper extends BuildWrapper {
     }
 
     public String getSkipPattern() {
-        if (this.skipPattern == null || this.skipPattern.isEmpty()) {
+        if (StringUtils.isEmpty(this.skipPattern)) {
             return getDescriptor().getSkipPattern();
         }
         return skipPattern;
@@ -69,9 +70,7 @@ public class SCMSkipBuildWrapper extends BuildWrapper {
             } catch (AbortException | FlowInterruptedException e) {
                 throw e;
             } catch (Exception e) {
-                if (LOGGER.isLoggable(Level.FINE)) {
-                    LOGGER.log(Level.FINE, "SCM Skip Build Wrapper", e);
-                }
+                LOGGER.log(Level.FINE, "SCM Skip Build Wrapper", e);
             }
         } else {
             SCMSkipTools.tagRunForDeletion(build, false);
