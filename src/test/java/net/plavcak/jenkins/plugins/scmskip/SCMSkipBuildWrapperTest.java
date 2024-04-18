@@ -34,12 +34,12 @@ public class SCMSkipBuildWrapperTest {
 
         BuildWrapperDescriptor descriptor = new SCMSkipBuildWrapper.DescriptorImpl();
 
-        project.getBuildWrappersList().add(new SCMSkipBuildWrapper(false, null));
+        project.getBuildWrappersList().add(new SCMSkipBuildWrapper(false, null, false));
 
         project = jenkins.configRoundtrip(project);
 
         jenkins.assertEqualDataBoundBeans(
-                new SCMSkipBuildWrapper(false, null),
+                new SCMSkipBuildWrapper(false, null, false),
                 project.getBuildWrappersList().get(0));
     }
 
@@ -85,8 +85,12 @@ public class SCMSkipBuildWrapperTest {
     }
 
     private FreeStyleProject createFreestyleProject(boolean delete) throws IOException {
+        return createFreestyleProject(delete, false);
+    }
+
+    private FreeStyleProject createFreestyleProject(boolean delete, boolean doForceDelete) throws IOException {
         FreeStyleProject project = jenkins.createFreeStyleProject();
-        SCMSkipBuildWrapper builder = new SCMSkipBuildWrapper(delete, null);
+        SCMSkipBuildWrapper builder = new SCMSkipBuildWrapper(delete, null, doForceDelete);
         project.getBuildWrappersList().add(builder);
         FakeChangeLogSCM fakeScm = new FakeChangeLogSCM();
         fakeScm.addChange().withMsg("Some change [ci skip] in code.");
@@ -147,6 +151,27 @@ public class SCMSkipBuildWrapperTest {
 
         assertEquals("", JenkinsRule.getLog(completedBuild), "Should delete log");
         assertEquals(List.of(), job.getBuilds());
+    }
+
+    @Test
+    public void testScriptedPipelineMultilineDoStopWorkflowRun() throws Exception {
+        String agentLabel = "test-agent";
+        jenkins.createOnlineSlave(Label.get(agentLabel));
+        WorkflowJob job = preparePipelineJob(
+                getClass().getClassLoader().getResource("testDoStopWorkflowRun.Jenkinsfile"),
+                "Some change [skip ci] in code.\n Additional line.");
+
+        QueueTaskFuture<WorkflowRun> future = job.scheduleBuild2(0);
+        Assert.assertNotNull(future);
+
+        WorkflowRun completedBuild = jenkins.assertBuildStatus(Result.ABORTED, future);
+        Assert.assertEquals(completedBuild.getDescription(), "SCM Skip - build skipped");
+
+        String expectedString =
+                "SCM Skip: Pattern .*\\[(ci skip|skip ci)\\].* matched on message: " + "Some change [skip ci] in code.";
+        jenkins.assertLogContains(expectedString, completedBuild);
+        jenkins.assertLogContains("before skip", completedBuild);
+        jenkins.assertLogNotContains("after skip", completedBuild);
     }
 
     @Test
