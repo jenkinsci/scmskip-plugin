@@ -29,10 +29,16 @@ public class SCMSkipBuildStep extends Builder implements SimpleBuildStep {
     private SCMSkipMatcher skipMatcher;
     private boolean deleteBuild;
     private String skipPattern;
+    private boolean doStopWorkflowRun;
 
     public SCMSkipBuildStep(boolean deleteBuild, String skipPattern) {
+        this(deleteBuild, skipPattern, false);
+    }
+
+    public SCMSkipBuildStep(boolean deleteBuild, String skipPattern, boolean doStopWorkflowRun) {
         this.deleteBuild = deleteBuild;
         this.skipPattern = skipPattern;
+        this.doStopWorkflowRun = doStopWorkflowRun;
         if (this.skipPattern == null) {
             this.skipPattern = SCMSkipConstants.DEFAULT_PATTERN;
         }
@@ -41,7 +47,7 @@ public class SCMSkipBuildStep extends Builder implements SimpleBuildStep {
 
     @DataBoundConstructor
     public SCMSkipBuildStep() {
-        this(false, null);
+        this(false, null, false);
     }
 
     public boolean isDeleteBuild() {
@@ -66,6 +72,15 @@ public class SCMSkipBuildStep extends Builder implements SimpleBuildStep {
         this.skipMatcher.setPattern(this.skipPattern);
     }
 
+    public boolean isDoStopWorkflowRun() {
+        return doStopWorkflowRun;
+    }
+
+    @DataBoundSetter
+    public void setDoStopWorkflowRun(boolean doStopWorkflowRun) {
+        this.doStopWorkflowRun = doStopWorkflowRun;
+    }
+
     @Override
     public void perform(
             @NonNull Run<?, ?> run,
@@ -78,7 +93,7 @@ public class SCMSkipBuildStep extends Builder implements SimpleBuildStep {
             SCMSkipTools.tagRunForDeletion(run, deleteBuild);
 
             try {
-                SCMSkipTools.stopBuild(run);
+                SCMSkipTools.stopBuild(run, doStopWorkflowRun);
             } catch (AbortException | FlowInterruptedException e) {
                 throw e;
             } catch (Exception e) {
