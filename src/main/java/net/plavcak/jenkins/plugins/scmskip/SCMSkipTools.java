@@ -136,7 +136,7 @@ public class SCMSkipTools {
      * @throws ServletException when build stopping fails
      * @throws FlowInterruptedException to terminate pipeline build
      */
-    public static void stopBuild(Run<?, ?> run) throws IOException, ServletException, FlowInterruptedException {
+    public static void stopBuild(Run<?, ?> run, boolean doStopWorkflowRun) throws IOException, ServletException, FlowInterruptedException {
         run.setDescription("SCM Skip - build skipped");
         run.setResult(Result.ABORTED);
         run.save();
@@ -144,12 +144,19 @@ public class SCMSkipTools {
         LOGGER.log(Level.FINE, () -> "Stopping build: '" + run.getId() + "'");
 
         if (run instanceof WorkflowRun) {
-            throw new FlowInterruptedException(Result.NOT_BUILT, true, new CauseOfInterruption() {
-                @Override
-                public String getShortDescription() {
-                    return "Skipped because of SCM message";
-                }
-            });
+            if(doStopWorkflowRun) {
+                LOGGER.log(Level.FINE, () -> "Forcing doStop on: '" + run.getId() + "'");
+                WorkflowRun build = (WorkflowRun) run;
+                build.doStop();
+            }
+            else {
+                throw new FlowInterruptedException(Result.NOT_BUILT, true, new CauseOfInterruption() {
+                    @Override
+                    public String getShortDescription() {
+                        return "Skipped because of SCM message";
+                    }
+                });
+            }
         } else if (run instanceof AbstractBuild) {
             AbstractBuild<?, ?> build = (AbstractBuild<?, ?>) run;
             build.doStop();
