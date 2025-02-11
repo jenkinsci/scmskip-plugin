@@ -17,7 +17,7 @@ import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.plugins.workflow.steps.FlowInterruptedException;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
-import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerRequest2;
 
 public class SCMSkipBuildWrapper extends BuildWrapper {
 
@@ -101,7 +101,7 @@ public class SCMSkipBuildWrapper extends BuildWrapper {
         }
 
         @Override
-        public boolean configure(StaplerRequest req, JSONObject json) {
+        public boolean configure(StaplerRequest2 req, JSONObject json) {
             req.bindJSON(this, json.getJSONObject("scmSkip"));
             save();
             return true;
