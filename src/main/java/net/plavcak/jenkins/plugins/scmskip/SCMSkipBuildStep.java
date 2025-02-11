@@ -20,7 +20,7 @@ import org.jenkinsci.Symbol;
 import org.jenkinsci.plugins.workflow.steps.FlowInterruptedException;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
-import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerRequest2;
 
 public class SCMSkipBuildStep extends Builder implements SimpleBuildStep {
 
@@ -112,7 +112,7 @@ public class SCMSkipBuildStep extends Builder implements SimpleBuildStep {
         }
 
         @Override
-        public boolean configure(StaplerRequest req, JSONObject json) {
+        public boolean configure(StaplerRequest2 req, JSONObject json) {
             req.bindJSON(this, json.getJSONObject("scmSkip"));
             save();
             return true;
