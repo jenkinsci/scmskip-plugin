@@ -70,7 +70,7 @@ public class SCMSkipTools {
     }
 
     /**
-     * Inspect build for matched pattern in changelog and user cause.
+     * Inspects build for matched pattern in changelog and user cause.
      * @param run current build
      * @param matcher matcher object
      * @param listener runtime listener
@@ -131,6 +131,7 @@ public class SCMSkipTools {
     }
 
     /**
+     * Stops a build.
      * @param run run to be terminated
      * @throws IOException may throw AbortException specifically to terminate build
      * @throws ServletException when build stopping fails
