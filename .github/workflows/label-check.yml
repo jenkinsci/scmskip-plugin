@@ -1,0 +1,15 @@
+name: cd
+on:
+  pull_request:
+
+jobs:
+  maven-cd:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: mheap/github-action-required-labels@v5
+        with:
+          mode: minimum
+          count: 1
+          labels: .*
+          exit_type: success
+          add_comment: true
