@@ -26,11 +26,13 @@ public class SCMSkipBuildWrapper extends BuildWrapper {
     private SCMSkipMatcher skipMatcher;
     private boolean deleteBuild;
     private String skipPattern;
+    private boolean doStopWorkflowRun;
 
     @DataBoundConstructor
-    public SCMSkipBuildWrapper(boolean deleteBuild, String skipPattern) {
+    public SCMSkipBuildWrapper(boolean deleteBuild, String skipPattern, boolean doStopWorkflowRun) {
         this.deleteBuild = deleteBuild;
         this.skipPattern = skipPattern;
+        this.doStopWorkflowRun = doStopWorkflowRun;
         if (this.skipPattern == null) {
             this.skipPattern = SCMSkipConstants.DEFAULT_PATTERN;
         }
@@ -59,6 +61,15 @@ public class SCMSkipBuildWrapper extends BuildWrapper {
         this.skipMatcher.setPattern(this.skipPattern);
     }
 
+    public boolean isDoStopWorkflowRun() {
+        return doStopWorkflowRun;
+    }
+
+    @DataBoundSetter
+    public void setDoStopWorkflowRun(boolean doStopWorkflowRun) {
+        this.doStopWorkflowRun = doStopWorkflowRun;
+    }
+
     @Override
     public Environment setUp(AbstractBuild build, Launcher launcher, BuildListener listener)
             throws IOException, FlowInterruptedException {
@@ -66,7 +77,7 @@ public class SCMSkipBuildWrapper extends BuildWrapper {
             SCMSkipTools.tagRunForDeletion(build, deleteBuild);
 
             try {
-                SCMSkipTools.stopBuild(build);
+                SCMSkipTools.stopBuild(build, doStopWorkflowRun);
             } catch (AbortException | FlowInterruptedException e) {
                 throw e;
             } catch (Exception e) {
