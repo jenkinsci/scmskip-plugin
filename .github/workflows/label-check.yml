@@ -3,8 +3,11 @@ on:
   pull_request:
 
 jobs:
-  maven-cd:
+  label-check:
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
     steps:
       - uses: mheap/github-action-required-labels@v5
         with:
