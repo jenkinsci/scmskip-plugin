@@ -4,8 +4,6 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.AbortException;
 import hudson.EnvVars;
 import hudson.Extension;
-import hudson.FilePath;
-import hudson.Launcher;
 import hudson.model.AbstractProject;
 import hudson.model.Run;
 import hudson.model.TaskListener;
@@ -67,12 +65,7 @@ public class SCMSkipBuildStep extends Builder implements SimpleBuildStep {
     }
 
     @Override
-    public void perform(
-            @NonNull Run<?, ?> run,
-            @NonNull FilePath workspace,
-            @NonNull EnvVars env,
-            @NonNull Launcher launcher,
-            @NonNull TaskListener listener)
+    public void perform(@NonNull Run<?, ?> run, @NonNull EnvVars env, @NonNull TaskListener listener)
             throws IOException, FlowInterruptedException {
         if (SCMSkipTools.inspectChangeSetAndCause(run, skipMatcher, listener)) {
             SCMSkipTools.tagRunForDeletion(run, deleteBuild);
@@ -87,6 +80,11 @@ public class SCMSkipBuildStep extends Builder implements SimpleBuildStep {
         } else {
             SCMSkipTools.tagRunForDeletion(run, false);
         }
+    }
+
+    @Override
+    public boolean requiresWorkspace() {
+        return false;
     }
 
     @Override
