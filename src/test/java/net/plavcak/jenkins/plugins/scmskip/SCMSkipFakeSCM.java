@@ -15,6 +15,7 @@ import org.apache.commons.io.IOUtils;
 import org.jvnet.hudson.test.FakeChangeLogSCM;
 
 public class SCMSkipFakeSCM extends FakeChangeLogSCM {
+
     private final String path;
     private final byte[] contents;
 

@@ -7,18 +7,24 @@ import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import hudson.tasks.BuildWrapperDescriptor;
 import java.io.IOException;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.FakeChangeLogSCM;
 import org.jvnet.hudson.test.JenkinsRule;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
-public class SCMSkipBuildWrapperTest {
+@WithJenkins
+class SCMSkipBuildWrapperTest {
 
-    @Rule
-    public JenkinsRule jenkins = new JenkinsRule();
+    private JenkinsRule jenkins;
+
+    @BeforeEach
+    void beforeEach(JenkinsRule rule) {
+        jenkins = rule;
+    }
 
     @Test
-    public void testConfigRoundtrip() throws Exception {
+    void testConfigRoundtrip() throws Exception {
         FreeStyleProject project = jenkins.createFreeStyleProject();
 
         BuildWrapperDescriptor descriptor = new SCMSkipBuildWrapper.DescriptorImpl();
@@ -43,7 +49,7 @@ public class SCMSkipBuildWrapperTest {
     }
 
     @Test
-    public void testFreestyleProject() throws Exception {
+    void testFreestyleProject() throws Exception {
         FreeStyleProject project = createFreestyleProject(false);
 
         FreeStyleBuild build = jenkins.assertBuildStatus(Result.ABORTED, project.scheduleBuild2(0));
@@ -52,7 +58,7 @@ public class SCMSkipBuildWrapperTest {
     }
 
     @Test
-    public void testFreestyleProjectWithDelete() throws Exception {
+    void testFreestyleProjectWithDelete() throws Exception {
         FreeStyleProject project = createFreestyleProject(true);
         FreeStyleBuild build = jenkins.assertBuildStatus(Result.ABORTED, project.scheduleBuild2(0));
         assertEquals("", JenkinsRule.getLog(build), "Should delete log");

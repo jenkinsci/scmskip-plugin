@@ -1,27 +1,28 @@
 package net.plavcak.jenkins.plugins.scmskip;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class SCMSkipMatcherTest {
+class SCMSkipMatcherTest {
 
     @Test
-    public void match() {
+    void match() {
         SCMSkipMatcher matcher = new SCMSkipMatcher();
-        Assert.assertTrue(matcher.match("Message with skip on the end. [ci skip] "));
-        Assert.assertTrue(matcher.match("[ci skip] Message with skip on beginning."));
-        Assert.assertTrue(matcher.match("Message with [ci skip] in the middle end."));
+        assertTrue(matcher.match("Message with skip on the end. [ci skip] "));
+        assertTrue(matcher.match("[ci skip] Message with skip on beginning."));
+        assertTrue(matcher.match("Message with [ci skip] in the middle end."));
 
-        Assert.assertTrue(matcher.match("Message with \n - [ci skip] - \n in multi line."));
+        assertTrue(matcher.match("Message with \n - [ci skip] - \n in multi line."));
 
-        Assert.assertFalse(matcher.match("Message without skip."));
-        Assert.assertFalse(matcher.match("Message without invalid  [ci_skip]."));
+        assertFalse(matcher.match("Message without skip."));
+        assertFalse(matcher.match("Message without invalid  [ci_skip]."));
     }
 
     @Test
-    public void getPattern() {
+    void getPattern() {
         SCMSkipMatcher matcher = new SCMSkipMatcher();
         assertEquals(".*\\[ci skip\\].*", matcher.getPattern().pattern());
 

@@ -1,15 +1,15 @@
 package net.plavcak.jenkins.plugins.scmskip;
 
 import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import hudson.plugins.git.GitChangeSet;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class GitMessageExtractorTest {
+class GitMessageExtractorTest {
 
     @Test
-    public void getFullMessage() {
+    void getFullMessage() {
         GitChangeSet changeSet = new GitChangeSet(
                 asList(
                         "commit 12345678", "",
