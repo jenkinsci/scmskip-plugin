@@ -14,5 +14,6 @@ jobs:
           mode: minimum
           count: 1
           labels: .*
+          use_regex: true
           exit_type: success
           add_comment: true
